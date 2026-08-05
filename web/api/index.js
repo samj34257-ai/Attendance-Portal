@@ -16,8 +16,8 @@ app.use((req, res, next) => {
 
 const getAdminPassword = () => process.env.ADMIN_PASSWORD || 'admin987654321';
 
-const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_sds_SUPABASE_URL || process.env.sds_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY || process.env.sds_SUPABASE_SERVICE_ROLE_KEY || process.env.sds_SUPABASE_SECRET_KEY || process.env.NEXT_PUBLIC_sds_SUPABASE_ANON_KEY;
 const isSupabaseConfigured = Boolean(supabaseUrl && supabaseKey);
 const supabase = isSupabaseConfigured ? createClient(supabaseUrl, supabaseKey) : null;
 
