@@ -1,0 +1,10 @@
+{
+  "adminPassword": "admin987654321",
+  "settings": {
+    "shiftStart": "20:30",
+    "shiftEnd": "04:30",
+    "timezone": "UTC"
+  },
+  "employees": [],
+  "sessions": []
+}

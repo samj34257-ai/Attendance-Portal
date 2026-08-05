@@ -1,0 +1,25 @@
+{
+  "id": "/",
+  "short_name": "PresencePWA",
+  "name": "PC-Only Work Presence Portal",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "scope": "/",
+  "background_color": "#090d16",
+  "theme_color": "#3b82f6",
+  "display": "standalone",
+  "orientation": "landscape"
+}
