@@ -198,39 +198,9 @@ app.get('/api/employees', async (req, res) => {
 
 // Create Employee (Admin action)
 app.post('/api/admin/employees', async (req, res) => {
-  const { name, id, password, dept, email, shiftStart, shiftEnd } = req.body;
+  const { name, id, password, dept, email, shiftStart, shiftEnd } = req.body || {};
   if (!name || !id || !password) {
     return res.status(400).json({ success: false, message: 'Name, ID & Password required' });
-  }
-
-  if (isSupabaseConfigured) {
-    try {
-      const { data: existing } = await supabase.from('employees').select('id').eq('id', id).maybeSingle();
-      if (existing) return res.status(400).json({ success: false, message: 'Employee ID already exists' });
-
-      const newEmp = {
-        id,
-        name,
-        password,
-        dept: dept || 'Engineering',
-        email: email || `${id.toLowerCase()}@company.com`,
-        status: 'NOT ACTIVE',
-        registered_device: 'PC Authorized',
-        shift_start: shiftStart || '20:30',
-        shift_end: shiftEnd || '04:30'
-      };
-
-      const { error } = await supabase.from('employees').insert([newEmp]);
-      if (error) return res.status(500).json({ success: false, message: error.message });
-      return res.json({ success: true, employee: newEmp });
-    } catch (e) {
-      return res.status(500).json({ success: false, message: e.message });
-    }
-  }
-
-  const db = readLocalDb();
-  if (db.employees.some(e => e.id.toLowerCase() === id.toLowerCase())) {
-    return res.status(400).json({ success: false, message: 'Employee ID already exists' });
   }
 
   const newEmp = {
@@ -240,13 +210,28 @@ app.post('/api/admin/employees', async (req, res) => {
     dept: dept || 'Engineering',
     email: email || `${id.toLowerCase()}@company.com`,
     status: 'NOT ACTIVE',
-    lastSeen: null,
-    registeredDevice: 'PC Authorized',
-    customShiftStart: shiftStart || null,
-    customShiftEnd: shiftEnd || null
+    registered_device: 'PC Authorized',
+    shift_start: shiftStart || '20:30',
+    shift_end: shiftEnd || '04:30'
   };
 
-  db.employees.push(newEmp);
+  if (isSupabaseConfigured) {
+    try {
+      const { error } = await supabase.from('employees').upsert([newEmp]);
+      if (!error) return res.json({ success: true, employee: newEmp });
+      console.error('Supabase insert warning:', error.message);
+    } catch (e) {
+      console.error('Supabase insert error:', e.message);
+    }
+  }
+
+  const db = readLocalDb();
+  const existingIdx = db.employees.findIndex(e => e.id.toLowerCase() === id.toLowerCase());
+  if (existingIdx >= 0) {
+    db.employees[existingIdx] = newEmp;
+  } else {
+    db.employees.push(newEmp);
+  }
   writeLocalDb(db);
   res.json({ success: true, employee: newEmp });
 });
