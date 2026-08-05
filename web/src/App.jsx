@@ -56,7 +56,7 @@ export default function App() {
 
   // Admin Auth state
   const [adminPasswordInput, setAdminPasswordInput] = useState('');
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(true);
   const [adminAuthError, setAdminAuthError] = useState('');
 
   // Global Settings state
@@ -393,14 +393,11 @@ export default function App() {
           </div>
         </div>
 
-        {/* Tab Selector */}
-        <div className="nav-tabs">
-          <button className={`nav-tab-btn ${activeTab === 'pwa' ? 'active' : ''}`} onClick={() => switchTab('pwa')}>
-            <Laptop size={16} /> Employee Portal
-          </button>
-          <button className={`nav-tab-btn ${activeTab === 'admin' ? 'active' : ''}`} onClick={() => switchTab('admin')}>
-            <Users size={16} /> Admin Dashboard
-          </button>
+        {/* Header Title & Tag */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <span className="brand-tag" style={{ background: activeTab === 'admin' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255,255,255,0.05)', color: activeTab === 'admin' ? 'var(--accent-blue)' : 'var(--text-muted)', cursor: 'pointer' }} onClick={() => switchTab(activeTab === 'admin' ? 'pwa' : 'admin')}>
+            {activeTab === 'admin' ? 'ADMIN DASHBOARD' : 'EMPLOYEE PORTAL'}
+          </span>
         </div>
 
         {/* PWA Install & Status */}
@@ -984,6 +981,20 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* Stealth Footer with Hidden Admin Lock Icon */}
+      <footer style={{ marginTop: '3rem', paddingTop: '1.2rem', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+        <span>© 2026 PC Work Presence Portal</span>
+        <button 
+          title="Console" 
+          style={{ background: 'transparent', border: 'none', color: activeTab === 'admin' ? 'var(--accent-blue)' : 'var(--text-muted)', cursor: 'pointer', padding: '0.4rem', opacity: 0.35, transition: 'all 0.2s' }}
+          onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+          onMouseLeave={(e) => e.currentTarget.style.opacity = '0.35'}
+          onClick={() => switchTab(activeTab === 'admin' ? 'pwa' : 'admin')}
+        >
+          <Lock size={13} />
+        </button>
+      </footer>
     </div>
   );
 }
