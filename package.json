@@ -1,0 +1,9 @@
+{
+  "name": "attendance-portal-root",
+  "private": true,
+  "scripts": {
+    "build": "cd web && npm install && npm run build",
+    "start": "cd web && node server.js",
+    "dev": "cd web && npm run dev"
+  }
+}
