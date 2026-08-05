@@ -311,10 +311,10 @@ export default function App() {
         setNewEmpForm({ name: '', id: '', password: '', dept: 'Engineering', email: '', shiftStart: settings.shiftStart || '20:30', shiftEnd: settings.shiftEnd || '04:30' });
         fetchEmployees();
       } else {
-        alert(data.message);
+        alert(data.message || 'Error creating employee');
       }
     } catch (err) {
-      alert('Error creating employee');
+      alert(err.message || 'Error creating employee');
     }
   };
 
