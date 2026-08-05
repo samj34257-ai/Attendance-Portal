@@ -103,18 +103,38 @@ app.post('/api/admin/employees', async (req, res) => {
     const { name, id, password, dept, email, shiftStart, shiftEnd } = req.body || {};
     if (!name || !id || !password) return res.status(400).json({ success: false, message: 'Name, ID & Password required' });
 
+    const newEmp = { 
+      id, 
+      name, 
+      password, 
+      dept: dept || 'Engineering', 
+      email: email || `${id.toLowerCase()}@company.com`, 
+      status: 'NOT ACTIVE', 
+      registered_device: 'PC Authorized', 
+      shift_start: shiftStart || '20:30', 
+      shift_end: shiftEnd || '04:30' 
+    };
+
     if (isSupabaseConfigured) {
-      const newEmp = { id, name, password, dept: dept || 'Engineering', email: email || '', status: 'NOT ACTIVE', registered_device: 'PC Authorized', shift_start: shiftStart || '20:30', shift_end: shiftEnd || '04:30' };
-      const { error } = await supabase.from('employees').insert([newEmp]);
-      if (error) return res.status(400).json({ success: false, message: error.message });
-      return res.json({ success: true, employee: newEmp });
+      try {
+        const { error } = await supabase.from('employees').upsert([newEmp]);
+        if (!error) return res.json({ success: true, employee: newEmp });
+        console.error('Supabase employee insert warning:', error.message);
+      } catch (e) {
+        console.error('Supabase employee insert error:', e.message);
+      }
     }
 
-    const newEmp = { id, name, password, dept: dept || 'Engineering', email: email || '', status: 'NOT ACTIVE', registeredDevice: 'PC Authorized', customShiftStart: shiftStart || null, customShiftEnd: shiftEnd || null };
-    memoryDb.employees.push(newEmp);
-    res.json({ success: true, employee: newEmp });
+    // Fallback in memory
+    const existingIndex = memoryDb.employees.findIndex(e => e.id.toLowerCase() === id.toLowerCase());
+    if (existingIndex >= 0) {
+      memoryDb.employees[existingIndex] = newEmp;
+    } else {
+      memoryDb.employees.push(newEmp);
+    }
+    return res.json({ success: true, employee: newEmp });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: err.message || 'Server error creating employee' });
   }
 });
 
